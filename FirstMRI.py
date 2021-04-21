@@ -6,7 +6,7 @@ Startup Code
 """
 
 import sys
-sys.path.append('../marcos_client')
+import external
 from PyQt5.QtWidgets import QApplication
 from controller.mainviewcontroller import MainViewController
 
@@ -15,10 +15,8 @@ AUTHOR = "Yolanda Vives"
 
 if __name__ == '__main__':
     print("Graphical User Interface for Magnetic Resonance Imaging {} by {}".format(VERSION, AUTHOR))
-    
+
     app = QApplication(sys.argv)
     gui = MainViewController()
     gui.show()
-    sys.exit(app.exec_())                                                    
-    
-    
+    sys.exit(app.exec_())

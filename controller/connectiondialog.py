@@ -12,14 +12,12 @@ Connection Dialog
 
 """
 
+import subprocess, time, sys
 from PyQt5.QtCore import QRegExp, pyqtSlot
 from PyQt5.QtGui import QRegExpValidator
 from PyQt5.uic import loadUiType
 #from server.communicationmanager import Com
-import subprocess  
-import time
-import sys
-sys.path.append('../marcos_extras')
+import local_config as lc
 
 ConnectionDialog_Form, ConnectionDialog_Base = loadUiType('ui/connDialog.ui')
 
@@ -45,25 +43,36 @@ class ConnectionDialog(ConnectionDialog_Base, ConnectionDialog_Form):
             '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.)'
             '{3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$')
         self.ip_box.setValidator(QRegExpValidator(ipValidator, self))
-        self.ip_box.addItems(['192.168.1.101'])
+        self.ip_box.addItems([lc.ip_address])
         # for item in params.hosts: self.ip_box.addItem(item)
         print("connection dialog ready")
 
     def connectClientToServer(self):
-        
-        router_ip = self.ip_box.currentText()
-        
-        subprocess.Popen('../marcos_extras/marcos_setup.sh %s %s' % (str(router_ip),'rp-122',), shell=True)
+
+        server_ip = self.ip_box.currentText()
+
+        if False:
+            # VN: not needed since marcos_setup.sh only needs to be run once per update; server takes a long time to compile
+            subprocess.Popen('../marcos_extras/marcos_setup.sh %s %s' % (str(server_ip),'rp-122',), shell=True)
+
+        if False:
+            # VN: load the FPGA bitstream, once per powercycle - should be a separate button in the GUI
+            subprocess.Popen('../marcos_extras/copy_bitstream.sh %s %s' % (str(server_ip),'rp-122',), shell=True)
+
 #        time.sleep(60)
 #        command1 = "killall marcos_server"
-#        subprocess.Popen(["ssh", "root@%s" % str(router_ip), command1],
+#        subprocess.Popen(["ssh", "root@%s" % str(server_ip), command1],
 #                        shell=False,
 #                        stdout=subprocess.PIPE,
 #                        stderr=subprocess.PIPE)
-#        
-        # Connect to the server        
+#
+        # Connect to the server
+
+        # VN: I'd recommend making this command display a live
+        # terminal at the bottom of the GUI window, so that users can
+        # see the server's warnings/errors directly
         command2 = "nohup ~/marcos_server &"
-        ssh = subprocess.Popen(["ssh", "root@%s" % str(router_ip), command2],
+        ssh = subprocess.Popen(["ssh", "root@%s" % str(server_ip), command2],
                         shell=False,
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE)
@@ -91,7 +100,7 @@ class ConnectionDialog(ConnectionDialog_Base, ConnectionDialog_Form):
         # TODO: Global list with ip's
         idx = self.ip_box.currentIndex()
         print(idx)
-        
+
 
     @pyqtSlot(str)
     def setConnectionStatusSlot(self, status: str = None) -> None:

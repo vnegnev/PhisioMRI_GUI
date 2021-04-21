@@ -1,0 +1,9 @@
+#!/usr/bin/env python
+#
+# Include paths for other repos related to MaRCoS
+#
+# If you have just cloned this repository, you should copy this file,
+# name it external.py, and adjust the paths to suit your local setup.
+import sys
+sys.path.append('../marcos_client')
+sys.path.append('../marcos_extras')

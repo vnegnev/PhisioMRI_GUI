@@ -1,2 +1,4 @@
 __pycache__/
 *.py[cod]
+external.py # local configuration file
+*~ # emacs temporary files
